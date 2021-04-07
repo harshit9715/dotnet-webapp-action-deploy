@@ -21,9 +21,21 @@ jobs:
         dotnet-version: 5.0.x
     - name: Restore dependencies
       run: dotnet restore
+    
     - name: Build
       run: dotnet build --no-restore -c Release
+    
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    
     - name: Publish
       run: dotnet publish --no-build -c Release -o ${{ env.WEBAPP_PACKAGE_PATH }}
+    
+    - name: Store atrifact to s3
+    - uses: jakejarvis/s3-sync-action@master
+      env:
+        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: 'ap-south-1'   # optional: defaults to us-east-1
+        SOURCE_DIR: ${{ env.WEBAPP_PACKAGE_PATH }}      # optional: defaults to entire repository
