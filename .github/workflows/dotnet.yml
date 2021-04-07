@@ -21,17 +21,12 @@ jobs:
         dotnet-version: 5.0.x
     - name: Restore dependencies
       run: dotnet restore
-    
     - name: Build
       run: dotnet build --no-restore -c Release
-    
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    
     - name: Publish
       run: dotnet publish --no-build -c Release -o ${{ env.WEBAPP_PACKAGE_PATH }}
-    
-    - name: Store atrifact to s3
     - uses: jakejarvis/s3-sync-action@master
       env:
         AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
